@@ -8,40 +8,23 @@
 #include <QTextFormat>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include "common.h"
 
-void MainWindow::loadData(QString path, QSet<QString>& set){
-    QFile file(path);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream in(&file);
-    in.setCodec("UTF-8");
-    while(!in.atEnd()){
-        QString line = in.readLine();
-        QString word = line.mid(0, line.indexOf(' '));
-        if(set.contains(word)){
-            qDebug() << "Contain:" << word;
-        }else{
-            set.insert(word);
-        }
-    }
-    file.close();
-    qDebug() << path << set.size();
-}
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    loadData(".\\data\\A1.txt", a1Set);
-    loadData(".\\data\\A2.txt", a2Set);
-    loadData(".\\data\\B1.txt", b1Set);
-    loadData(".\\data\\B2.txt", b2Set);
-    loadData(".\\data\\B2+.txt", b2pSet);
-    loadData(".\\data\\C1.txt", c1Set);
-
-    allSet = a1Set + a2Set + b1Set + b2Set + b2pSet + c1Set;
-    qDebug() << "Total:" << allSet.size();
+    configDialog = new ConfigDialog(this);
+    connect(ui->action, &QAction::triggered, this, [=]{
+        configDialog->show();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -51,6 +34,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
+    if(!gItemList.size()) return;
     ui->pushButton_2->setEnabled(true);
 
     QString str = ui->textEdit->toPlainText();
@@ -67,15 +51,13 @@ void MainWindow::on_pushButton_clicked()
     qDebug() << "Total words:" << words.size();
     qDebug() << "Words:" << wordsSet.size();
 
-    a1 = (wordsSet & a1Set);
-    a2 = (wordsSet & a2Set);
-    b1 = (wordsSet & b1Set);
-    b2 = (wordsSet & b2Set);
-    b2p = (wordsSet & b2pSet);
-    c1 = (wordsSet & c1Set);
-    other = (wordsSet - allSet);
+    for(int i = 0; i < gItemList.size() - 1; i++){
+        gItemList[i].existSet = (wordsSet & gItemList[i].stdSet);
+    }
 
-    foreach (QString str, other) {
+    gItemList.last().existSet = (wordsSet - gAllSet);
+
+    foreach (QString str, gItemList.last().existSet) {
         if(str[0].isUpper()){
             QString prototype = str.toLower();
             asignWord(prototype, str);
@@ -120,55 +102,34 @@ void MainWindow::on_pushButton_clicked()
         }
     }
 
-    qDebug() << "A1:" << a1 << a1.size();
-    qDebug() << "A2:" << a2 << a2.size();
-    qDebug() << "B1:" << b1 << b1.size();
-    qDebug() << "B2:" << b2 << b2.size();
-    qDebug() << "B2+:" << b2p << b2p.size();
-    qDebug() << "C1:" << c1 << c1.size();
-    qDebug() << "\r\nOther:" << other << other.size();
+    for(int i = 0; i < gItemList.size(); i++){
+        qDebug() << gItemList[i].name << gItemList[i].existSet << gItemList[i].existSet.size();
+    }
 
     //画柱状图
-    QBarSet* levelA1 = new QBarSet("Level A1");
-    QBarSet* levelA2 = new QBarSet("Level A2");
-    QBarSet* levelB1 = new QBarSet("Level B1");
-    QBarSet* levelB2 = new QBarSet("Level B2");
-    QBarSet* levelB2P = new QBarSet("Level B2+");
-    QBarSet* levelC1 = new QBarSet("Level C1");
-    QBarSet* levelOther = new QBarSet("Other");
+    QBarSeries* barSeries = new QBarSeries(this);
+    barSeries->setLabelsVisible(true);
+    barSeries->setBarWidth(0.5);
+    for(int i = 0; i < gItemList.size(); i++){
+        QBarSet* barSet = new QBarSet(gItemList[i].name, this);
+        barSet->setColor(gItemList[i].color);
 
-    levelC1->setColor(Qt::yellow);
-    levelOther->setColor(Qt::red);
+                *barSet << gItemList[i].existSet.size();
 
-    *levelA1 << a1.size() << 0 << 0 << 0 << 0 << 0 << 0;
-    *levelA2 << 0 << a2.size()  << 0 << 0 << 0 << 0 << 0;
-    *levelB1 << 0 << 0  << b1.size()<< 0 << 0 << 0 << 0;
-    *levelB2 << 0 << 0 << 0  << b2.size()<< 0 << 0 << 0;
-    *levelB2P << 0 << 0 << 0 << 0  << b2p.size()<< 0 << 0;
-    *levelC1 << 0 << 0 << 0 << 0 << 0  << c1.size()<< 0;
-    *levelOther << 0 << 0 << 0 << 0 << 0 << 0 << other.size();
-
-    QBarSeries* series = new QBarSeries();
-    series->append(levelA1);
-    series->append(levelA2);
-    series->append(levelB1);
-    series->append(levelB2);
-    series->append(levelB2P);
-    series->append(levelC1);
-    series->append(levelOther);
-    series->setLabelsVisible(true);
-    series->setBarWidth(1);
+        barSeries->append(barSet);
+    }
 
     QChart* chart = new QChart();
-    chart->addSeries(series);
+    chart->addSeries(barSeries);
     chart->setTitle("统计结果");
     chart->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
-    categories << "Level A1" << "Level A2" << "Level B1" << "Level B2" << "Level B2+" << "Level C1" << "Other";
+    categories << "总计";
+
     QBarCategoryAxis* axis = new QBarCategoryAxis();
     axis->append(categories);
     chart->createDefaultAxes();
-    chart->setAxisX(axis, series);
+    chart->setAxisX(axis, barSeries);
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
@@ -177,13 +138,9 @@ void MainWindow::on_pushButton_clicked()
 
     //画饼图
     QPieSeries* pieSeries = new QPieSeries();
-    pieSeries->append("Level A1", a1.size());
-    pieSeries->append("Level A2", a2.size());
-    pieSeries->append("Level B1", b1.size());
-    pieSeries->append("Level B2", b2.size());
-    pieSeries->append("Level B2+", b2p.size());
-    pieSeries->append("Level C1", c1.size());
-    pieSeries->append("Other", other.size());
+    for(int i = 0; i < gItemList.size(); i++){
+        pieSeries->append(gItemList[i].name, gItemList[i].existSet.size());
+    }
     pieSeries->setLabelsVisible(true);
 
     QList<QPieSlice*> slices = pieSeries->slices();
@@ -209,33 +166,11 @@ void MainWindow::on_pushButton_clicked()
     ui->label->setText(QString("单词数:%1 总单词数:%2").arg(wordsSet.size()).arg(words.size()));
 
     ui->textEdit->textCursor().beginEditBlock();
-    foreach (QString key, other) {
-        QColor color = levelOther->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, c1) {
-        QColor color = levelC1->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, b2p) {
-        QColor color = levelB2P->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, b2) {
-        QColor color = levelB2->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, b1) {
-        QColor color = levelB1->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, a2) {
-        QColor color = levelA2->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
-    }
-    foreach (QString key, a1) {
-        QColor color = levelA1->color();
-        setTextBackgroundColor(ui->textEdit, key, QColor(color.red(), color.green(), color.blue(), 64));
+    for(int i = gItemList.size() - 1; i >= 0; i--){
+        foreach (QString word, gItemList[i].existSet) {
+            QColor color = gItemList[i].color;
+            setTextBackgroundColor(ui->textEdit, word, QColor(color.red(), color.green(), color.blue(), 64));
+        }
     }
     ui->textEdit->textCursor().endEditBlock();
 }
@@ -357,30 +292,11 @@ void MainWindow::asignWord(QString prototype, const QString str){
     if(prototype[0].isUpper()){
         prototype = prototype.toLower();
     }
-
-    if(a1Set.contains(prototype)){
-        a1.insert(str);
-        other.remove(str);
-    }
-    if(a2Set.contains(prototype)){
-        a2.insert(str);
-        other.remove(str);
-    }
-    if(b1Set.contains(prototype)){
-        b1.insert(str);
-        other.remove(str);
-    }
-    if(b2Set.contains(prototype)){
-        b2.insert(str);
-        other.remove(str);
-    }
-    if(b2pSet.contains(prototype)){
-        b2p.insert(str);
-        other.remove(str);
-    }
-    if(c1Set.contains(prototype)){
-        c1.insert(str);
-        other.remove(str);
+    for(int i = 0; i < gItemList.size(); i++) {
+        if(gItemList[i].stdSet.contains(prototype)){
+            gItemList[i].existSet.insert(str);
+            gItemList.last().existSet.remove(str);
+        }
     }
 }
 
@@ -390,14 +306,9 @@ void MainWindow::on_pushButton_2_clicked()
     if(path.isEmpty()){
         return;
     }
-
-    saveToFile(path, "Level A1.txt", a1);
-    saveToFile(path, "Level A2.txt", a2);
-    saveToFile(path, "Level B1.txt", b1);
-    saveToFile(path, "Level B2.txt", b2);
-    saveToFile(path, "Level B2+.txt", b2p);
-    saveToFile(path, "Level C1.txt", c1);
-    saveToFile(path, "Other.txt", other);
+    foreach (Item_t item, gItemList) {
+        saveToFile(path, item.name, item.existSet);
+    }
 
     QMessageBox::information(this, "消息", "导出完成!");
 }
@@ -406,9 +317,10 @@ void MainWindow::saveToFile(QString path, QString fileName, QSet<QString>& set){
     if(set.size()){
         QStringList words = set.toList();
         words.sort();
-        QFile file(path + QDir::separator() + fileName);
+        QFile file(path + QDir::separator() + fileName.append(".txt"));
         file.open(QIODevice::WriteOnly | QIODevice::Text);
         QTextStream out(&file);
+        out.setCodec("UTF-8");
         foreach (QString word, words) {
             out << word << "\n";
         }
