@@ -1,35 +1,72 @@
 {
-    "ConfigType": 2,
+    "ConfigType": 0,
     "Items0": [
         {
             "Color": "#209FDF",
-            "FilePath": ".\\data\\A1.txt",
+            "FilePath": ".\\data\\Oxford\\A1.txt",
             "Name": "A1 Level"
         },
         {
             "Color": "#99CA53",
-            "FilePath": ".\\data\\A2.txt",
+            "FilePath": ".\\data\\Oxford\\A2.txt",
             "Name": "A2 Level"
         },
         {
             "Color": "#F6A625",
-            "FilePath": ".\\data\\B1.txt",
+            "FilePath": ".\\data\\Oxford\\B1.txt",
             "Name": "B1 Level"
         },
         {
             "Color": "#6D5FD5",
-            "FilePath": ".\\data\\B2.txt",
+            "FilePath": ".\\data\\Oxford\\B2.txt",
             "Name": "B2 Level"
         },
         {
             "Color": "#BF593E",
-            "FilePath": ".\\data\\B2+.txt",
+            "FilePath": ".\\data\\Oxford\\B2+.txt",
             "Name": "B2+ Level"
         },
         {
             "Color": "#FFFF00",
-            "FilePath": ".\\data\\C1.txt",
+            "FilePath": ".\\data\\Oxford\\C1.txt",
             "Name": "C1 Level"
+        },
+        {
+            "Color": "#FF0000",
+            "FilePath": "",
+            "Name": "Other"
+        }
+    ],
+    "Items1": [
+        {
+            "Color": "#209FDF",
+            "FilePath": ".\\data\\Cambridge\\A1.txt",
+            "Name": "A1 Level"
+        },
+        {
+            "Color": "#99CA53",
+            "FilePath": ".\\data\\Cambridge\\A2.txt",
+            "Name": "A2 Level"
+        },
+        {
+            "Color": "#F6A625",
+            "FilePath": ".\\data\\Cambridge\\B1.txt",
+            "Name": "B1 Level"
+        },
+        {
+            "Color": "#6D5FD5",
+            "FilePath": ".\\data\\Cambridge\\B2.txt",
+            "Name": "B2 Level"
+        },
+        {
+            "Color": "#BF593E",
+            "FilePath": ".\\data\\Cambridge\\C1.txt",
+            "Name": "C1 Level"
+        },
+        {
+            "Color": "#FFFF00",
+            "FilePath": ".\\data\\Cambridge\\C2.txt",
+            "Name": "C2 Level"
         },
         {
             "Color": "#FF0000",
@@ -40,32 +77,32 @@
     "Items2": [
         {
             "Color": "#ff00ffff",
-            "FilePath": "./data/A1.txt",
+            "FilePath": "./data/Oxford/A1.txt",
             "Name": "小学"
         },
         {
             "Color": "#ffaaff00",
-            "FilePath": "./data/A2.txt",
+            "FilePath": "./data/Oxford/A2.txt",
             "Name": "初中"
         },
         {
             "Color": "#ff0000ff",
-            "FilePath": "./data/B1.txt",
+            "FilePath": "./data/Oxford/B1.txt",
             "Name": "高一"
         },
         {
             "Color": "#ffff00ff",
-            "FilePath": "./data/B2.txt",
+            "FilePath": "./data/Oxford/B2.txt",
             "Name": "高二"
         },
         {
             "Color": "#ffffaa00",
-            "FilePath": "./data/B2+.txt",
+            "FilePath": "./data/Oxford/B2+.txt",
             "Name": "高三"
         },
         {
             "Color": "#ffffff00",
-            "FilePath": "./data/C1.txt",
+            "FilePath": "./data/Oxford/C1.txt",
             "Name": "大学"
         },
         {

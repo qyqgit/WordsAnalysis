@@ -118,7 +118,7 @@ void ConfigDialog::updateChart(){
     chart->setTitle("统计结果");
     chart->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
-    categories << "百分比";
+    categories << QString("百分比(%1)").arg(gAllSet.size());
 
     QBarCategoryAxis* axisY = new QBarCategoryAxis(this);
     axisY->append(categories);
