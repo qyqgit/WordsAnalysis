@@ -11,6 +11,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 #include "common.h"
 
 
@@ -327,3 +329,16 @@ void MainWindow::saveToFile(QString path, QString fileName, QSet<QString>& set){
         file.close();
     }
 }
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    QTextDocument *document = ui->textEdit->document();
+    QPrinter printer;
+
+    QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    if (dlg->exec() != QDialog::Accepted)
+        return;
+
+    document->print(&printer);
+}
+
