@@ -1,5 +1,66 @@
 {
     "ConfigType": 0,
+    "Favorite 2025-12-10 18:10:12": [
+        {
+            "Color": "#ff00ffff",
+            "FilePath": "./data/Oxford/A1.txt",
+            "Name": "小学"
+        },
+        {
+            "Color": "#ffaaff00",
+            "FilePath": "./data/Oxford/A2.txt",
+            "Name": "初中"
+        },
+        {
+            "Color": "#ff0000ff",
+            "FilePath": "./data/Oxford/B1.txt",
+            "Name": "高一"
+        },
+        {
+            "Color": "#ffff00ff",
+            "FilePath": "./data/Oxford/B2.txt",
+            "Name": "高二"
+        },
+        {
+            "Color": "#ffffaa00",
+            "FilePath": "./data/Oxford/B2+.txt",
+            "Name": "高三"
+        },
+        {
+            "Color": "#ffffff00",
+            "FilePath": "./data/Oxford/C1.txt",
+            "Name": "大学"
+        },
+        {
+            "Color": "#ff0000",
+            "FilePath": "",
+            "Name": "Other"
+        }
+    ],
+    "Favorite 2025-12-10 18:29:14": [
+        {
+            "Color": "#ff00aaff",
+            "FilePath": "./data/NGSL/NGSL.txt",
+            "Name": "NGSL"
+        },
+        {
+            "Color": "#ff0000",
+            "FilePath": "",
+            "Name": "Other"
+        }
+    ],
+    "Favorite 2025-12-10 18:32:04": [
+        {
+            "Color": "#ffaaff7f",
+            "FilePath": "./data/NGSL/NGSL.31K.txt",
+            "Name": "NGSL.31K"
+        },
+        {
+            "Color": "#ff0000",
+            "FilePath": "",
+            "Name": "Other"
+        }
+    ],
     "Items0": [
         {
             "Color": "#209FDF",
