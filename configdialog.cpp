@@ -26,6 +26,9 @@ ConfigDialog::ConfigDialog(QWidget *parent)
     }else{
         enableTable(false);
     }
+
+    favoriteDialog = new FavoriteDialog(this);
+    connect(favoriteDialog, &FavoriteDialog::refreshTable, this, &ConfigDialog::refreshTable);
 }
 
 ConfigDialog::~ConfigDialog()
@@ -33,19 +36,14 @@ ConfigDialog::~ConfigDialog()
     delete ui;
 }
 void ConfigDialog::updateLoadingData(){
-    QJsonParseError jsonError;
     gItemList.clear();
     gAllSet.clear();
-    QFile file("config.json");
-    file.open(QIODevice::ReadOnly);
-    QByteArray data = file.readAll();
-    file.close();
-    gJsonDoc = QJsonDocument::fromJson(data,&jsonError);
-    if(gJsonDoc.isNull()){
+    QJsonDocument doc = getJsonDoc();
+    if(doc.isNull()){
         return;
     }
 
-    QJsonObject configObj = gJsonDoc.object();
+    QJsonObject configObj = doc.object();
     quint8 configType = configObj.value("ConfigType").toInt();
     QJsonArray itemArray;
     if(configType == OXFORD_CONFIG_TYPE){
@@ -92,14 +90,12 @@ void ConfigDialog::loadData(const QString path, QSet<QString>& set){
 }
 
 void ConfigDialog::updateConfigType(quint8 type){
-    QJsonObject jsonObj = gJsonDoc.object();
+    QJsonDocument doc = getJsonDoc();
+    QJsonObject jsonObj = doc.object();
     jsonObj["ConfigType"] = type;
-    gJsonDoc.setObject(jsonObj);
+    doc.setObject(jsonObj);
 
-    QFile file("config.json");
-    file.open(QIODevice::WriteOnly);
-    file.write(gJsonDoc.toJson(QJsonDocument::Indented));
-    file.close();
+    setJsonDoc(doc);
 }
 
 void ConfigDialog::updateChart(){
@@ -140,17 +136,12 @@ void ConfigDialog::updateTable(){
 
     ui->tableWidget->clearContents();
     ui->tableWidget->setRowCount(0);
-    QJsonParseError jsonError;
-    QFile file("config.json");
-    file.open(QIODevice::ReadOnly);
-    QByteArray data = file.readAll();
-    file.close();
-    gJsonDoc = QJsonDocument::fromJson(data,&jsonError);
-    if(gJsonDoc.isNull()){
+    QJsonDocument doc = getJsonDoc();
+    if(doc.isNull()){
         return;
     }
 
-    QJsonObject configObj = gJsonDoc.object();
+    QJsonObject configObj = doc.object();
     QJsonArray itemArray = configObj.value("Items2").toArray();
     for(int i = 0; i < itemArray.size() - 1; i++){
         Item_t item;
@@ -225,10 +216,9 @@ void ConfigDialog::on_pushButtonAdd_clicked()
     ui->tableWidget->setCellWidget(row, 2, frame);
 }
 
-
-void ConfigDialog::on_pushButtonConfirm_clicked()
-{
-    QJsonObject jsonObj = gJsonDoc.object();
+void ConfigDialog::saveConfig(QString name){
+    QJsonDocument doc = getJsonDoc();
+    QJsonObject jsonObj = doc.object();
     QJsonArray items2;
 
     for(int i = 0; i < ui->tableWidget->rowCount(); i++){
@@ -249,14 +239,16 @@ void ConfigDialog::on_pushButtonConfirm_clicked()
     item["Name"] = "Other";
     items2.append(item);
 
-    jsonObj["Items2"] = items2;
-    gJsonDoc.setObject(jsonObj);
+    jsonObj[name] = items2;
+    doc.setObject(jsonObj);
 
-    QFile file("config.json");
-    file.open(QIODevice::WriteOnly);
-    file.write(gJsonDoc.toJson(QJsonDocument::Indented));
-    file.close();
+    setJsonDoc(doc);
+}
 
+void ConfigDialog::on_pushButtonConfirm_clicked()
+{
+
+    saveConfig("Items2");
     ui->radioButton_3->click();
 }
 
@@ -285,8 +277,26 @@ void ConfigDialog::on_tableWidget_cellPressed(int row, int column)
     }
 }
 
+void ConfigDialog::refreshTable(){
+    ui->pushButtonReload->click();
+    ui->radioButton_3->click();
+}
+
 void ConfigDialog::on_pushButtonReload_clicked()
 {
     updateTable();
+}
+
+
+void ConfigDialog::on_pushButtonFavorite_clicked()
+{
+    QString name = "Favorite " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    saveConfig(name);
+}
+
+
+void ConfigDialog::on_pushButtonFavoriteFolder_clicked()
+{
+    favoriteDialog->show();
 }
 

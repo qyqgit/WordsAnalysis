@@ -19,7 +19,9 @@ typedef struct Item{
 }Item_t;
 
 extern QList<Item_t> gItemList;
-extern QJsonDocument gJsonDoc;
 extern QSet<QString> gAllSet;
+
+extern QJsonDocument getJsonDoc();
+extern void setJsonDoc(QJsonDocument doc);
 
 #endif // COMMON_H

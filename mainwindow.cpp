@@ -34,10 +34,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButtonStat_clicked()
 {
     if(!gItemList.size()) return;
-    ui->pushButton_2->setEnabled(true);
+    ui->pushButtonExport->setEnabled(true);
 
     QString str = ui->textEdit->toPlainText();
     QRegularExpression reg1 = QRegularExpression("[\\p{P}\\p{S}\\d]");
@@ -302,7 +302,7 @@ void MainWindow::asignWord(QString prototype, const QString str){
     }
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_pushButtonExport_clicked()
 {
     QString path = QFileDialog::getExistingDirectory(this, "保存位置", "");
     if(path.isEmpty()){
@@ -330,7 +330,7 @@ void MainWindow::saveToFile(QString path, QString fileName, QSet<QString>& set){
     }
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_pushButtonPrint_clicked()
 {
     QTextDocument *document = ui->textEdit->document();
     QPrinter printer;

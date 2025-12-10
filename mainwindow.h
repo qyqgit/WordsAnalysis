@@ -25,10 +25,9 @@ public:
     void setTextBackgroundColor(QTextEdit *textEdit, const QString &searchText, const QColor &color);
     void saveToFile(QString path, QString fileName, QSet<QString>& set);
 private slots:
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
+    void on_pushButtonStat_clicked();
+    void on_pushButtonExport_clicked();
+    void on_pushButtonPrint_clicked();
 
 private:
     Ui::MainWindow *ui;

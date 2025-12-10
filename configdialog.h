@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QtCharts/QtCharts>
 
+#include "favoritedialog.h"
+
 namespace Ui {
 class ConfigDialog;
 }
@@ -22,6 +24,10 @@ public:
     void updateLoadingData();
     void updateTable();
     void enableTable(bool on);
+
+    void saveConfig(QString name);
+public slots:
+    void refreshTable();
 private slots:
     void on_radioButton_1_clicked();
 
@@ -39,8 +45,13 @@ private slots:
 
     void on_pushButtonReload_clicked();
 
+    void on_pushButtonFavorite_clicked();
+
+    void on_pushButtonFavoriteFolder_clicked();
+
 private:
     Ui::ConfigDialog *ui;
+    FavoriteDialog* favoriteDialog;
 };
 
 #endif // CONFIGDIALOG_H

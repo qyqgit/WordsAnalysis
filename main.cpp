@@ -3,7 +3,6 @@
 #include <QApplication>
 
 QList<Item_t> gItemList;
-QJsonDocument gJsonDoc;
 QSet<QString> gAllSet;
 
 int main(int argc, char *argv[])

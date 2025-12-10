@@ -9,8 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    common.cpp \
     configdialog.cpp \
     customtextedit.cpp \
+    favoritedialog.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -18,10 +20,12 @@ HEADERS += \
     common.h \
     configdialog.h \
     customtextedit.h \
+    favoritedialog.h \
     mainwindow.h
 
 FORMS += \
     configdialog.ui \
+    favoritedialog.ui \
     mainwindow.ui
 
 # Default rules for deployment.
