@@ -24,9 +24,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     configDialog = new ConfigDialog(this);
-    connect(ui->action, &QAction::triggered, this, [=]{
+    connect(ui->actionConfig, &QAction::triggered, this, [=]{
         configDialog->show();
     });
+    connect(ui->actionAbout_2, &QAction::triggered, this, [=]{
+        QDesktopServices::openUrl(QUrl(QLatin1String("https://github.com/qyqgit/WordsAnalysis/releases")));
+    });
+
+    QString dateTime;
+    dateTime += __DATE__;
+    dateTime += __TIME__;
+    //注意" "是两个空格，用于日期为单数时需要转成“空格+0”
+    QDateTime buildDateTime = QLocale(QLocale::English).toDateTime(dateTime,"MMM dd yyyyhh:mm:ss");
+    QString datetime = buildDateTime.toString("yyyy-MM-dd hh:mm:ss");
+    setWindowTitle("CEFR Levels Test " + datetime);
+
 }
 
 MainWindow::~MainWindow()
