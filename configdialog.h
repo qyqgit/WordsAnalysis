@@ -14,6 +14,9 @@ class ConfigDialog : public QDialog
 {
     Q_OBJECT
 
+signals:
+    void updateLangueSignal();
+
 public:
     explicit ConfigDialog(QWidget *parent = nullptr);
     ~ConfigDialog();
@@ -28,6 +31,7 @@ public:
     void saveConfig(QString name);
 public slots:
     void refreshTable();
+    void updateLangue();
 private slots:
     void on_radioButton_1_clicked();
 

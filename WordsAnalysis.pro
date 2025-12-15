@@ -44,3 +44,6 @@ RESOURCES += \
     res.qrc
 
 RC_ICONS = yojrt-cvj46-001.ico
+
+TRANSLATIONS += \
+    WordsAnalysis_en_US.ts

@@ -17,7 +17,7 @@ ConfigDialog::ConfigDialog(QWidget *parent)
 
     QStringList labels;
     ui->tableWidget->setColumnCount(4);
-    labels << "名称" << "路径" << "颜色" << "删除";
+    labels << tr("名称") << tr("路径") << tr("颜色") << tr("删除");
     ui->tableWidget->setHorizontalHeaderLabels(labels);
     updateTable();
 
@@ -29,6 +29,7 @@ ConfigDialog::ConfigDialog(QWidget *parent)
 
     favoriteDialog = new FavoriteDialog(this);
     connect(favoriteDialog, &FavoriteDialog::refreshTable, this, &ConfigDialog::refreshTable);
+    connect(this, &ConfigDialog::updateLangueSignal, favoriteDialog, &FavoriteDialog::updateLangue);
 }
 
 ConfigDialog::~ConfigDialog()
@@ -111,10 +112,10 @@ void ConfigDialog::updateChart(){
 
     QChart* chart = new QChart();
     chart->addSeries(barSeries);
-    chart->setTitle("统计结果");
+    chart->setTitle(tr("统计结果"));
     chart->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
-    categories << QString("百分比(%1)").arg(gAllSet.size());
+    categories << QString(tr("百分比(%1)")).arg(gAllSet.size());
 
     QBarCategoryAxis* axisY = new QBarCategoryAxis(this);
     axisY->append(categories);
@@ -135,6 +136,7 @@ void ConfigDialog::updateChart(){
 void ConfigDialog::updateTable(){
 
     ui->tableWidget->clearContents();
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("名称") << tr("路径") << tr("颜色") << tr("删除"));
     ui->tableWidget->setRowCount(0);
     QJsonDocument doc = getJsonDoc();
     if(doc.isNull()){
@@ -150,7 +152,7 @@ void ConfigDialog::updateTable(){
         item.name = itemArray[i].toObject().value("Name").toString();
         item.filePath = itemArray[i].toObject().value("FilePath").toString();
         frame->setStyleSheet(QString("background-color: %1;").arg(colorStr));
-        QPushButton* btnDel = new QPushButton("删除", this);
+        QPushButton* btnDel = new QPushButton(tr("删除"), this);
         ui->tableWidget->insertRow(i);
         ui->tableWidget->setItem(i, 0, new QTableWidgetItem(item.name));
         ui->tableWidget->setItem(i, 1, new QTableWidgetItem(item.filePath));
@@ -209,7 +211,7 @@ void ConfigDialog::on_pushButtonAdd_clicked()
     int randomNumber = QRandomGenerator::global()->bounded(0, gItemList.size()); // 或者使用bounded(0, 256)
     quint32 row = ui->tableWidget->rowCount();
     ui->tableWidget->insertRow(row);
-    QPushButton* btnDel = new QPushButton("删除", this);
+    QPushButton* btnDel = new QPushButton(tr("删除"), this);
     QFrame* frame = new QFrame(this);
     frame->setStyleSheet(QString(" background-color: %1;").arg(gItemList[randomNumber].color.name(QColor::NameFormat::HexArgb)));
     ui->tableWidget->setCellWidget(row, 3, btnDel);
@@ -264,12 +266,12 @@ void ConfigDialog::on_tableWidget_currentCellChanged(int currentRow, int current
 void ConfigDialog::on_tableWidget_cellPressed(int row, int column)
 {
     if(column == 1){
-        QString path = QFileDialog::getOpenFileName(this, "选择文件", "", "Text files (*.txt);; All files (*.*)");
+        QString path = QFileDialog::getOpenFileName(this, tr("选择文件"), "", "Text files (*.txt);; All files (*.*)");
         if(path.isEmpty()) return;
         ui->tableWidget->item(row, column)->setText(path);
         ui->tableWidget->resizeColumnsToContents();
     }else if(column == 2){
-        QColor color = QColorDialog::getColor(Qt::white, this, "选择颜色");
+        QColor color = QColorDialog::getColor(Qt::white, this, tr("选择颜色"));
         if(color.isValid()){
             QFrame* frame = qobject_cast<QFrame*>(ui->tableWidget->cellWidget(row, 2));
             frame->setStyleSheet(QString("background-color: %1;").arg(color.name(QColor::NameFormat::HexArgb)));
@@ -281,7 +283,10 @@ void ConfigDialog::refreshTable(){
     ui->pushButtonReload->click();
     ui->radioButton_3->click();
 }
-
+void ConfigDialog::updateLangue(){
+    ui->retranslateUi(this);
+    emit updateLangueSignal();
+}
 void ConfigDialog::on_pushButtonReload_clicked()
 {
     updateTable();

@@ -19,6 +19,8 @@ public:
     ~FavoriteDialog();
 
     void updateTable();
+public slots:
+    void updateLangue();
 protected:
     // 重写 showEvent 函数
     void showEvent(QShowEvent *event) override;

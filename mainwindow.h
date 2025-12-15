@@ -17,6 +17,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+signals:
+    void updateLangue();
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -32,5 +35,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     ConfigDialog* configDialog;
+    QTranslator trans;
 };
 #endif // MAINWINDOW_H

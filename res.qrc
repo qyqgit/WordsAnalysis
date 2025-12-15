@@ -1,3 +1,6 @@
 <RCC>
     <qresource prefix="/new/prefix1"/>
+    <qresource prefix="/">
+        <file>WordsAnalysis_en_US.qm</file>
+    </qresource>
 </RCC>

@@ -17,7 +17,7 @@ FavoriteDialog::FavoriteDialog(QWidget *parent)
 
     QStringList labels;
     ui->tableWidget->setColumnCount(2);
-    labels << "名称" << "删除";
+    labels << tr("名称") << tr("删除");
     ui->tableWidget->setHorizontalHeaderLabels(labels);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
@@ -26,9 +26,12 @@ FavoriteDialog::~FavoriteDialog()
 {
     delete ui;
 }
-
+void FavoriteDialog::updateLangue(){
+    ui->retranslateUi(this);
+}
 void FavoriteDialog::updateTable(){
     ui->tableWidget->clearContents();
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("名称") << tr("删除"));
     ui->tableWidget->setRowCount(0);
     QJsonDocument doc = getJsonDoc();
     if(doc.isNull()){
@@ -43,7 +46,7 @@ void FavoriteDialog::updateTable(){
         }
     }
     for(int i = 0; i < favorites.size(); i++) {
-        QPushButton* btnDel = new QPushButton("删除", this);
+        QPushButton* btnDel = new QPushButton(tr("删除"), this);
         ui->tableWidget->insertRow(i);
         ui->tableWidget->setItem(i, 0, new QTableWidgetItem(favorites[i]));
         ui->tableWidget->setCellWidget(i, 1, btnDel);

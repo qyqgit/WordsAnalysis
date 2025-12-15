@@ -24,11 +24,26 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     configDialog = new ConfigDialog(this);
+
+    connect(this, &MainWindow::updateLangue, configDialog, &ConfigDialog::updateLangue);
+
     connect(ui->actionConfig, &QAction::triggered, this, [=]{
         configDialog->show();
     });
     connect(ui->actionAbout_2, &QAction::triggered, this, [=]{
         QDesktopServices::openUrl(QUrl(QLatin1String("https://github.com/qyqgit/WordsAnalysis/releases")));
+    });
+    connect(ui->actionEnglish, &QAction::triggered, this, [=]{
+        trans.load(":/WordsAnalysis_en_US.qm");
+        qApp->installTranslator(&trans);
+        ui->retranslateUi(this);
+        emit updateLangue();
+    });
+    connect(ui->actionChinese, &QAction::triggered, this, [=]{
+        trans.load(":/WordsAnalysis_en_US.qm");
+        qApp->removeTranslator(&trans);
+        ui->retranslateUi(this);
+        emit updateLangue();
     });
 
     QString dateTime;
@@ -135,10 +150,10 @@ void MainWindow::on_pushButtonStat_clicked()
 
     QChart* chart = new QChart();
     chart->addSeries(barSeries);
-    chart->setTitle("统计结果");
+    chart->setTitle(tr("统计结果"));
     chart->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
-    categories << "总计";
+    categories << tr("总计");
 
     QBarCategoryAxis* axis = new QBarCategoryAxis();
     axis->append(categories);
@@ -170,7 +185,7 @@ void MainWindow::on_pushButtonStat_clicked()
 
     QChart* pieChart = new QChart();
     pieChart->addSeries(pieSeries);
-    pieChart->setTitle("统计结果");
+    pieChart->setTitle(tr("统计结果"));
     pieChart->legend()->setVisible(true);
 
     ui->graphicsView_2->setRenderHint(QPainter::Antialiasing);
@@ -316,7 +331,7 @@ void MainWindow::asignWord(QString prototype, const QString str){
 
 void MainWindow::on_pushButtonExport_clicked()
 {
-    QString path = QFileDialog::getExistingDirectory(this, "保存位置", "");
+    QString path = QFileDialog::getExistingDirectory(this, tr("保存位置"), "");
     if(path.isEmpty()){
         return;
     }
@@ -324,7 +339,7 @@ void MainWindow::on_pushButtonExport_clicked()
         saveToFile(path, item.name, item.existSet);
     }
 
-    QMessageBox::information(this, "消息", "导出完成!");
+    QMessageBox::information(this, tr("消息"), tr("导出完成!"));
 }
 
 void MainWindow::saveToFile(QString path, QString fileName, QSet<QString>& set){
